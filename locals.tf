@@ -246,6 +246,7 @@ locals {
     "*.his.arc.azure.com",
     "*.manage.microsoft.com",
     "enterpriseregistration.windows.net",
+    "graph.microsoft.com",
   ]))
 
   fqdns_updates_and_security = sort(distinct([

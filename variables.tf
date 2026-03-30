@@ -267,7 +267,13 @@ variable "tenable_platform" {
 variable "linux_update_fqdns" {
   type        = set(string)
   description = "Linux package repository FQDNs (override for other distros)"
-  default     = ["esm.ubuntu.com"]
+  default = [
+    "esm.ubuntu.com",
+    "archive.ubuntu.com",
+    "security.ubuntu.com",
+    "snapshot.ubuntu.com",
+    "*.snapcraftcontent.com",
+  ]
 }
 
 variable "edge_update_fqdns" {
