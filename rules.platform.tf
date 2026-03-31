@@ -182,7 +182,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_spokes_on_prem" {
   #############################################################################
   # Tenable Vulnerability Scanning (optional, default off)
   # Scanner → Spokes: NetBIOS (TCP 139) for authenticated scanning
-  # Spokes → Scanner: Management UI (TCP 8000, 8090)
+  # Spokes → Scanner: Management UI (TCP 8000, 8090), Nessus Web GUI (8834), SSH (22)
   #############################################################################
 
   dynamic "network_rule_collection" {
@@ -204,7 +204,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_spokes_on_prem" {
         name                  = "Spokes_to_Tenable_Management"
         source_ip_groups      = [local.ip_group_ids.spokes]
         destination_ip_groups = [local.ip_group_ids.tenable_scanners]
-        destination_ports     = ["8000", "8090"]
+        destination_ports     = ["22", "8000", "8090", "8834"]
         protocols             = ["TCP"]
       }
     }
