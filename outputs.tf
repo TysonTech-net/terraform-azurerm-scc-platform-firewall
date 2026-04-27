@@ -39,16 +39,16 @@ output "ipg_remote_spokes_id" {
 output "rule_collection_group_ids" {
   description = "Map of rule collection group resource IDs"
   value = {
-    dnat                     = try(azurerm_firewall_policy_rule_collection_group.rcg_dnat[0].id, null)
-    troubleshooting          = try(azurerm_firewall_policy_rule_collection_group.rcg_troubleshooting[0].id, null)
-    identity                 = azurerm_firewall_policy_rule_collection_group.rcg_identity.id
-    internet_network         = azurerm_firewall_policy_rule_collection_group.rcg_internet.id
-    internet_application     = azurerm_firewall_policy_rule_collection_group.rcg_internet_application.id
-    platform_network         = try(azurerm_firewall_policy_rule_collection_group.rcg_spokes_on_prem[0].id, null)
-    platform_application     = try(azurerm_firewall_policy_rule_collection_group.rcg_platform_application[0].id, null)
-    monitoring               = try(azurerm_firewall_policy_rule_collection_group.rcg_monitoring[0].id, null)
-    custom_network           = try(azurerm_firewall_policy_rule_collection_group.rcg_custom_network[0].id, null)
-    custom_application       = try(azurerm_firewall_policy_rule_collection_group.rcg_custom_application[0].id, null)
+    dnat                 = try(azurerm_firewall_policy_rule_collection_group.rcg_dnat[0].id, null)
+    troubleshooting      = try(azurerm_firewall_policy_rule_collection_group.rcg_troubleshooting[0].id, null)
+    identity             = azurerm_firewall_policy_rule_collection_group.rcg_identity.id
+    internet_network     = azurerm_firewall_policy_rule_collection_group.rcg_internet.id
+    internet_application = azurerm_firewall_policy_rule_collection_group.rcg_internet_application.id
+    platform_network     = try(azurerm_firewall_policy_rule_collection_group.rcg_spokes_on_prem[0].id, null)
+    platform_application = try(azurerm_firewall_policy_rule_collection_group.rcg_platform_application[0].id, null)
+    monitoring           = try(azurerm_firewall_policy_rule_collection_group.rcg_monitoring[0].id, null)
+    custom_network       = try(azurerm_firewall_policy_rule_collection_group.rcg_custom_network[0].id, null)
+    custom_application   = try(azurerm_firewall_policy_rule_collection_group.rcg_custom_application[0].id, null)
   }
 }
 
@@ -94,7 +94,7 @@ output "rule_collection_summary" {
       icmp                = local.settings.enable_icmp
     }
     platform_application = {
-      priority       = local.settings.rcg_platform_application_priority
+      priority        = local.settings.rcg_platform_application_priority
       spokes_to_fqdns = local.has_spokes && length(local.spokes_allowed_fqdns) > 0
     }
     monitoring = {
