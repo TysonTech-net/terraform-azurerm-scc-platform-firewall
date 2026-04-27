@@ -4,15 +4,15 @@
 
 locals {
   ip_group_definitions = {
-    identity_dcs    = { cidrs = var.ip_groups.identity_dcs, required = true }
-    spokes          = { cidrs = var.ip_groups.spokes, required = false }
-    on_prem         = { cidrs = var.ip_groups.on_prem, required = false }
-    replication_dcs = { cidrs = var.ip_groups.replication_dcs, required = false }
-    remote_spokes   = { cidrs = var.ip_groups.remote_spokes, required = false }
-    jumpboxes       = { cidrs = var.ip_groups.jumpboxes, required = false }
-    lm_collectors      = { cidrs = try(var.ip_groups.logicmonitor.collectors, []), required = false }
-    lm_targets         = { cidrs = try(var.ip_groups.logicmonitor.targets, []), required = false }
-    tenable_scanners   = { cidrs = try(var.ip_groups.tenable.scanners, []), required = false }
+    identity_dcs     = { cidrs = var.ip_groups.identity_dcs, required = true }
+    spokes           = { cidrs = var.ip_groups.spokes, required = false }
+    on_prem          = { cidrs = var.ip_groups.on_prem, required = false }
+    replication_dcs  = { cidrs = var.ip_groups.replication_dcs, required = false }
+    remote_spokes    = { cidrs = var.ip_groups.remote_spokes, required = false }
+    jumpboxes        = { cidrs = var.ip_groups.jumpboxes, required = false }
+    lm_collectors    = { cidrs = try(var.ip_groups.logicmonitor.collectors, []), required = false }
+    lm_targets       = { cidrs = try(var.ip_groups.logicmonitor.targets, []), required = false }
+    tenable_scanners = { cidrs = try(var.ip_groups.tenable.scanners, []), required = false }
   }
 
   # Custom IP groups (from var.custom_ip_groups) merged into the same resource

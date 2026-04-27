@@ -10,7 +10,8 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_spokes_on_prem" {
     local.has_spokes_to_on_prem_rules ||
     local.has_on_prem_to_spokes_rules ||
     local.has_tenable_scanning_rules ||
-    local.has_jumpbox_rules
+    local.has_jumpbox_rules ||
+    local.has_spokes
   ) ? 1 : 0
 
   name               = "Default_Platform_Network_Rules"
@@ -275,6 +276,29 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_spokes_on_prem" {
           protocols             = ["ICMP"]
           destination_ip_groups = [local.ip_group_ids.spokes, local.ip_group_ids.remote_spokes]
         }
+      }
+    }
+  }
+
+  #############################################################################
+  # Spokes → Azure Resource Manager (control plane access)
+  # Required for any spoke VM using managed identity, ARM API calls, or Azure
+  # Policy compliance reporting. Service tag covers all ARM regional endpoints
+  # automatically.
+  #############################################################################
+
+  dynamic "network_rule_collection" {
+    for_each = local.has_spokes ? [1] : []
+    content {
+      name     = "Spokes_to_AzureResourceManager"
+      priority = local.p_spokes_to_arm
+      action   = "Allow"
+      rule {
+        name                  = "SpokesToARM"
+        source_ip_groups      = [local.ip_group_ids.spokes]
+        destination_addresses = ["AzureResourceManager"]
+        destination_ports     = ["443"]
+        protocols             = ["TCP"]
       }
     }
   }

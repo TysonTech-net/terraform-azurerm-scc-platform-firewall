@@ -45,8 +45,8 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_custom_network" {
       dynamic "rule" {
         for_each = network_rule_collection.value.rules
         content {
-          name              = rule.value.name
-          source_addresses  = rule.value.source_addresses
+          name             = rule.value.name
+          source_addresses = rule.value.source_addresses
           # Resolve IP group key names to resource IDs
           source_ip_groups = rule.value.source_ip_groups != null ? [
             for ref in rule.value.source_ip_groups :

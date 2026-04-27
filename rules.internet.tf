@@ -51,11 +51,11 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet" {
 
       # Azure KMS - Windows Activation
       rule {
-        name                  = "Azure_KMS_Activation"
-        source_addresses      = ["*"]
-        destination_ports     = ["1688"]
-        protocols             = ["TCP"]
-        destination_fqdns     = ["kms.core.windows.net", "azkms.core.windows.net"]
+        name              = "Azure_KMS_Activation"
+        source_addresses  = ["*"]
+        destination_ports = ["1688"]
+        protocols         = ["TCP"]
+        destination_fqdns = ["kms.core.windows.net", "azkms.core.windows.net"]
       }
     }
   }
@@ -248,6 +248,28 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet_applicati
         name              = "Database"
         source_addresses  = ["*"]
         destination_fqdns = local.fqdns_database
+        protocols {
+          type = "Https"
+          port = 443
+        }
+      }
+
+      # Microsoft Defender for SQL on Arc-enabled SQL hosts
+      rule {
+        name              = "ArcDatabaseDefender"
+        source_addresses  = ["*"]
+        destination_fqdns = local.fqdns_arcdata
+        protocols {
+          type = "Https"
+          port = 443
+        }
+      }
+
+      # Common browser web assets (Google fonts, Chrome update checks, gstatic)
+      rule {
+        name              = "BrowserGoogle"
+        source_addresses  = ["*"]
+        destination_fqdns = local.fqdns_browser_google
         protocols {
           type = "Https"
           port = 443
@@ -474,8 +496,8 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet_applicati
       action   = "Allow"
 
       rule {
-        name             = "TenableCloudUpdates"
-        source_ip_groups = [local.ip_group_ids.tenable_scanners]
+        name              = "TenableCloudUpdates"
+        source_ip_groups  = [local.ip_group_ids.tenable_scanners]
         destination_fqdns = sort(distinct(tolist(var.tenable_platform)))
         protocols {
           type = "Https"
