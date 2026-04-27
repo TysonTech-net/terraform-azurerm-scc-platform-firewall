@@ -18,51 +18,51 @@ locals {
 locals {
   settings = {
     # Azure management rules
-    enable_az_mgmt_rules            = coalesce(try(var.rule_settings.enable_az_mgmt_rules, null), true)
-    enable_az_mgmt_app_rules        = coalesce(try(var.rule_settings.enable_az_mgmt_app_rules, null), true)
-    enable_ntp                      = coalesce(try(var.rule_settings.enable_ntp, null), true)
+    enable_az_mgmt_rules     = coalesce(try(var.rule_settings.enable_az_mgmt_rules, null), true)
+    enable_az_mgmt_app_rules = coalesce(try(var.rule_settings.enable_az_mgmt_app_rules, null), true)
+    enable_ntp               = coalesce(try(var.rule_settings.enable_ntp, null), true)
 
     # LogicMonitor monitoring (auto-enabled when ip_groups.logicmonitor defined)
-    enable_monitoring_windows       = coalesce(try(var.rule_settings.enable_monitoring_windows, null), true)
-    enable_monitoring_linux         = coalesce(try(var.rule_settings.enable_monitoring_linux, null), true)
+    enable_monitoring_windows = coalesce(try(var.rule_settings.enable_monitoring_windows, null), true)
+    enable_monitoring_linux   = coalesce(try(var.rule_settings.enable_monitoring_linux, null), true)
 
     # Security monitoring (Sentinel, syslog, CEF, WEF)
-    enable_security_monitoring      = coalesce(try(var.rule_settings.enable_security_monitoring, null), true)
+    enable_security_monitoring = coalesce(try(var.rule_settings.enable_security_monitoring, null), true)
 
     # Internet outbound
-    enable_internet_outbound        = coalesce(try(var.rule_settings.enable_internet_outbound, null), false)
+    enable_internet_outbound = coalesce(try(var.rule_settings.enable_internet_outbound, null), false)
 
     # Troubleshooting
     enable_troubleshooting          = coalesce(try(var.rule_settings.enable_troubleshooting, null), false)
     enable_troubleshooting_internet = coalesce(try(var.rule_settings.enable_troubleshooting_internet, null), false)
 
     # Spoke/On-prem traffic
-    enable_spoke_to_spoke           = coalesce(try(var.rule_settings.enable_spoke_to_spoke, null), true)
-    enable_cross_region_spokes      = coalesce(try(var.rule_settings.enable_cross_region_spokes, null), true)
-    enable_jumpbox_access           = coalesce(try(var.rule_settings.enable_jumpbox_access, null), true)
-    enable_spokes_to_on_prem        = coalesce(try(var.rule_settings.enable_spokes_to_on_prem, null), true)
-    enable_icmp                     = coalesce(try(var.rule_settings.enable_icmp, null), true)
+    enable_spoke_to_spoke      = coalesce(try(var.rule_settings.enable_spoke_to_spoke, null), true)
+    enable_cross_region_spokes = coalesce(try(var.rule_settings.enable_cross_region_spokes, null), true)
+    enable_jumpbox_access      = coalesce(try(var.rule_settings.enable_jumpbox_access, null), true)
+    enable_spokes_to_on_prem   = coalesce(try(var.rule_settings.enable_spokes_to_on_prem, null), true)
+    enable_icmp                = coalesce(try(var.rule_settings.enable_icmp, null), true)
 
     # Identity/ADDS rules
-    enable_on_prem_adds             = coalesce(try(var.rule_settings.enable_on_prem_adds, null), false)
-    enable_on_prem_kerberos         = coalesce(try(var.rule_settings.enable_on_prem_kerberos, null), false)
+    enable_on_prem_adds     = coalesce(try(var.rule_settings.enable_on_prem_adds, null), false)
+    enable_on_prem_kerberos = coalesce(try(var.rule_settings.enable_on_prem_kerberos, null), false)
 
     # OS updates and security tooling
-    enable_edge_updates             = coalesce(try(var.rule_settings.enable_edge_updates, null), true)
-    enable_linux_updates            = coalesce(try(var.rule_settings.enable_linux_updates, null), true)
-    enable_tenable                  = coalesce(try(var.rule_settings.enable_tenable, null), false)
+    enable_edge_updates  = coalesce(try(var.rule_settings.enable_edge_updates, null), true)
+    enable_linux_updates = coalesce(try(var.rule_settings.enable_linux_updates, null), true)
+    enable_tenable       = coalesce(try(var.rule_settings.enable_tenable, null), false)
 
     # Rule collection group priorities
     # Order: DNAT(100) → Troubleshoot(200) → Identity(300) → Internet Net(400) / App(410) → Platform Net(500) / App(510) → Monitoring(600) → Custom(700-800)
-    rcg_troubleshooting_priority        = coalesce(try(var.rule_settings.rcg_troubleshooting_priority, null), 200)
-    rcg_identity_priority               = coalesce(try(var.rule_settings.rcg_identity_priority, null), 300)
-    rcg_internet_network_priority       = coalesce(try(var.rule_settings.rcg_internet_network_priority, null), 400)
-    rcg_internet_application_priority   = coalesce(try(var.rule_settings.rcg_internet_application_priority, null), 410)
-    rcg_platform_network_priority       = coalesce(try(var.rule_settings.rcg_platform_network_priority, null), 500)
-    rcg_platform_application_priority   = coalesce(try(var.rule_settings.rcg_platform_application_priority, null), 510)
-    rcg_monitoring_priority             = coalesce(try(var.rule_settings.rcg_monitoring_priority, null), 600)
-    rcg_custom_network_priority         = coalesce(try(var.rule_settings.rcg_custom_network_priority, null), 700)
-    rcg_custom_application_priority     = coalesce(try(var.rule_settings.rcg_custom_application_priority, null), 800)
+    rcg_troubleshooting_priority      = coalesce(try(var.rule_settings.rcg_troubleshooting_priority, null), 200)
+    rcg_identity_priority             = coalesce(try(var.rule_settings.rcg_identity_priority, null), 300)
+    rcg_internet_network_priority     = coalesce(try(var.rule_settings.rcg_internet_network_priority, null), 400)
+    rcg_internet_application_priority = coalesce(try(var.rule_settings.rcg_internet_application_priority, null), 410)
+    rcg_platform_network_priority     = coalesce(try(var.rule_settings.rcg_platform_network_priority, null), 500)
+    rcg_platform_application_priority = coalesce(try(var.rule_settings.rcg_platform_application_priority, null), 510)
+    rcg_monitoring_priority           = coalesce(try(var.rule_settings.rcg_monitoring_priority, null), 600)
+    rcg_custom_network_priority       = coalesce(try(var.rule_settings.rcg_custom_network_priority, null), 700)
+    rcg_custom_application_priority   = coalesce(try(var.rule_settings.rcg_custom_application_priority, null), 800)
   }
 }
 
@@ -72,14 +72,14 @@ locals {
 
 locals {
   # Identity rule priorities
-  p_dns             = local.settings.rcg_identity_priority + 1
-  p_spokes_dns      = local.settings.rcg_identity_priority + 2  # DNS Spokes→DCs
-  p_aad             = local.settings.rcg_identity_priority + 3
-  p_bastion         = local.settings.rcg_identity_priority + 4
-  p_spokes_adds     = local.settings.rcg_identity_priority + 5
-  p_on_prem_adds    = local.settings.rcg_identity_priority + 6
-  p_on_prem_kerberos = local.settings.rcg_identity_priority + 7  # Kerberos-only from on-prem
-  p_replication     = local.settings.rcg_identity_priority + 8
+  p_dns              = local.settings.rcg_identity_priority + 1
+  p_spokes_dns       = local.settings.rcg_identity_priority + 2 # DNS Spokes→DCs
+  p_aad              = local.settings.rcg_identity_priority + 3
+  p_bastion          = local.settings.rcg_identity_priority + 4
+  p_spokes_adds      = local.settings.rcg_identity_priority + 5
+  p_on_prem_adds     = local.settings.rcg_identity_priority + 6
+  p_on_prem_kerberos = local.settings.rcg_identity_priority + 7 # Kerberos-only from on-prem
+  p_replication      = local.settings.rcg_identity_priority + 8
 
   # Internet Network rule priorities (RCG priority 400)
   p_az_infra = local.settings.rcg_internet_network_priority + 1 # Azure Infrastructure (Wire Server, IMDS, KMS)
@@ -101,11 +101,12 @@ locals {
   p_security_monitoring = local.settings.rcg_platform_network_priority + 2 # Security monitoring (Sentinel, syslog, WEF)
   p_spokes_to_on_prem   = local.settings.rcg_platform_network_priority + 3
   p_on_prem_to_spokes   = local.settings.rcg_platform_network_priority + 4
-  p_icmp                = local.settings.rcg_platform_network_priority + 5 # ICMP between segments
-  p_cross_region_spoke  = local.settings.rcg_platform_network_priority + 6 # Cross-region spoke ↔ remote spoke
-  p_cross_region_secmon = local.settings.rcg_platform_network_priority + 7 # Cross-region security monitoring
-  p_tenable_scanning    = local.settings.rcg_platform_network_priority + 8 # Tenable vulnerability scanning
-  p_jumpbox_access      = local.settings.rcg_platform_network_priority + 9 # Jumpbox SSH/RDP to spokes
+  p_icmp                = local.settings.rcg_platform_network_priority + 5  # ICMP between segments
+  p_cross_region_spoke  = local.settings.rcg_platform_network_priority + 6  # Cross-region spoke ↔ remote spoke
+  p_cross_region_secmon = local.settings.rcg_platform_network_priority + 7  # Cross-region security monitoring
+  p_tenable_scanning    = local.settings.rcg_platform_network_priority + 8  # Tenable vulnerability scanning
+  p_jumpbox_access      = local.settings.rcg_platform_network_priority + 9  # Jumpbox SSH/RDP to spokes
+  p_spokes_to_arm       = local.settings.rcg_platform_network_priority + 10 # Spokes → AzureResourceManager (control plane)
 
   # Platform Application rule priorities (RCG priority 510)
   p_spokes_to_fqdns = local.settings.rcg_platform_application_priority + 1
@@ -131,7 +132,7 @@ locals {
 
   # Kerberos-only ports (lighter than full ADDS for on-prem auth)
   kerberos_ports = {
-    tcp = ["88", "464"]  # Kerberos, Kerberos password change
+    tcp = ["88", "464"] # Kerberos, Kerberos password change
     udp = ["88", "464"]
   }
 }
@@ -285,6 +286,7 @@ locals {
 
   fqdns_storage = sort(distinct([
     "*.blob.core.windows.net",
+    "*.blob.storage.azure.net", # Managed disk metadata (md-*.z*.blob.storage.azure.net)
     "*.dfs.core.windows.net",
     "*.documents.azure.com",
     "*.file.core.windows.net",
@@ -294,14 +296,21 @@ locals {
 
   fqdns_monitoring = sort(distinct([
     "*.azure-automation.net",
+    "*.azurefd.net", # Microsoft Edge CDN (e.g. edgecdn-* hosts)
     "*.data.microsoft.com",
     "*.events.data.microsoft.com",
     "*.handler.control.monitor.azure.com",
     "*.monitoring.azure.com",
     "*.ods.opinsights.azure.com",
     "*.oms.opinsights.azure.com",
+    "aefd.nelreports.net", # Microsoft Network Error Logging (NEL)
+    "arc.msn.com",         # Microsoft browser/Edge homepage feed
     "global.handler.control.monitor.azure.com",
+    "ntp.msn.com", # Microsoft NTP-as-HTTPS check
+    "r.bing.com",  # Bing browser asset / web GUI dependency
     "settings-win.data.microsoft.com",
+    "th.bing.com",
+    "thf.bing.com",
   ]))
 
   fqdns_development = sort(distinct([
@@ -334,12 +343,26 @@ locals {
     "*.database.windows.net",
   ]))
 
+  # Microsoft Defender for SQL on Azure Arc-enabled SQL hosts.
+  # Arc agent + Defender data plane talk to *.arcdataservices.com regional endpoints.
+  fqdns_arcdata = sort(distinct([
+    "*.arcdataservices.com",
+  ]))
+
+  # Common browser web assets (Google fonts, Chrome update, gstatic).
+  # These show up from any host running a browser-based admin UI.
+  fqdns_browser_google = sort(distinct([
+    "clients2.google.com",
+    "fonts.googleapis.com",
+    "*.gstatic.com",
+  ]))
+
   # Azure Site Recovery FQDNs (required for A2A replication)
   # These are explicit FQDNs in case the AzureSiteRecovery FQDN tag doesn't cover all endpoints
   # Reference: https://learn.microsoft.com/en-us/azure/site-recovery/azure-to-azure-about-networking
   fqdns_site_recovery = sort(distinct([
     "*.hypervrecoverymanager.windowsazure.com", # Site Recovery service communication
-    "*.attest.azure.net",                        # Azure Attestation (required for Trusted Launch VMs with ASR)
+    "*.attest.azure.net",                       # Azure Attestation (required for Trusted Launch VMs with ASR)
   ]))
 
   # FQDNs for spoke segments

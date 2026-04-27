@@ -100,53 +100,53 @@ variable "rule_settings" {
   description = "Rule enablement and priority settings"
   type = object({
     # Azure management rules
-    enable_az_mgmt_rules            = optional(bool, true)  # Includes ASR!
-    enable_az_mgmt_app_rules        = optional(bool, true)
-    enable_ntp                      = optional(bool, true)  # NTP for all VMs
+    enable_az_mgmt_rules     = optional(bool, true) # Includes ASR!
+    enable_az_mgmt_app_rules = optional(bool, true)
+    enable_ntp               = optional(bool, true) # NTP for all VMs
 
     # LogicMonitor monitoring (auto-enabled when ip_groups.logicmonitor defined)
-    enable_monitoring_windows       = optional(bool, true)  # Windows monitoring (RPC, WMI, RDP, SQL)
-    enable_monitoring_linux         = optional(bool, true)  # Linux monitoring (SSH, SNMP, SNMP-TLS)
+    enable_monitoring_windows = optional(bool, true) # Windows monitoring (RPC, WMI, RDP, SQL)
+    enable_monitoring_linux   = optional(bool, true) # Linux monitoring (SSH, SNMP, SNMP-TLS)
 
     # Security monitoring (Sentinel, Tenable, syslog, CEF, WEF)
-    enable_security_monitoring      = optional(bool, true)  # Security sub → Spokes (443, 514, 1514, 5044, 5985-5986)
+    enable_security_monitoring = optional(bool, true) # Security sub → Spokes (443, 514, 1514, 5044, 5985-5986)
 
     # Internet outbound
-    enable_internet_outbound        = optional(bool, false) # Allow HTTP/HTTPS to internet
+    enable_internet_outbound = optional(bool, false) # Allow HTTP/HTTPS to internet
 
     # Troubleshooting
     enable_troubleshooting          = optional(bool, false)
     enable_troubleshooting_internet = optional(bool, false)
 
     # Spoke traffic
-    enable_spoke_to_spoke           = optional(bool, true)  # Spoke ↔ Spoke traffic (management, cross-spoke apps)
-    enable_cross_region_spokes      = optional(bool, true)  # Cross-region spoke ↔ remote spoke traffic
-    enable_icmp                     = optional(bool, true)  # ICMP between segments
+    enable_spoke_to_spoke      = optional(bool, true) # Spoke ↔ Spoke traffic (management, cross-spoke apps)
+    enable_cross_region_spokes = optional(bool, true) # Cross-region spoke ↔ remote spoke traffic
+    enable_icmp                = optional(bool, true) # ICMP between segments
 
     # Jumpbox access (SSH + RDP from jumpboxes to all spokes)
-    enable_jumpbox_access           = optional(bool, true)   # Jumpboxes → Spokes (SSH, RDP)
+    enable_jumpbox_access = optional(bool, true) # Jumpboxes → Spokes (SSH, RDP)
 
     # On-prem traffic (enable if VPN/ExpressRoute connected)
-    enable_spokes_to_on_prem        = optional(bool, true)  # Spoke ↔ On-prem traffic
-    enable_on_prem_adds             = optional(bool, false) # Full ADDS access from on-prem
-    enable_on_prem_kerberos         = optional(bool, false) # Kerberos-only from on-prem (lighter than full ADDS)
+    enable_spokes_to_on_prem = optional(bool, true)  # Spoke ↔ On-prem traffic
+    enable_on_prem_adds      = optional(bool, false) # Full ADDS access from on-prem
+    enable_on_prem_kerberos  = optional(bool, false) # Kerberos-only from on-prem (lighter than full ADDS)
 
     # OS updates and security tooling
-    enable_edge_updates             = optional(bool, true)  # Edge browser updates + SmartScreen
-    enable_linux_updates            = optional(bool, true)  # Linux package repo access (Ubuntu ESM etc.)
-    enable_tenable                  = optional(bool, false) # Tenable vulnerability scanning (opt-in)
+    enable_edge_updates  = optional(bool, true)  # Edge browser updates + SmartScreen
+    enable_linux_updates = optional(bool, true)  # Linux package repo access (Ubuntu ESM etc.)
+    enable_tenable       = optional(bool, false) # Tenable vulnerability scanning (opt-in)
 
     # Rule collection group priorities
     # Order: DNAT(100) → Troubleshoot(200) → Identity(300) → Internet Net(400) / App(410) → Platform Net(500) / App(510) → Monitoring(600) → Custom(700-800)
-    rcg_troubleshooting_priority        = optional(number, 200)
-    rcg_identity_priority               = optional(number, 300)
-    rcg_internet_network_priority       = optional(number, 400)
-    rcg_internet_application_priority   = optional(number, 410)
-    rcg_platform_network_priority       = optional(number, 500)
-    rcg_platform_application_priority   = optional(number, 510)
-    rcg_monitoring_priority             = optional(number, 600)
-    rcg_custom_network_priority         = optional(number, 700)
-    rcg_custom_application_priority     = optional(number, 800)
+    rcg_troubleshooting_priority      = optional(number, 200)
+    rcg_identity_priority             = optional(number, 300)
+    rcg_internet_network_priority     = optional(number, 400)
+    rcg_internet_application_priority = optional(number, 410)
+    rcg_platform_network_priority     = optional(number, 500)
+    rcg_platform_application_priority = optional(number, 510)
+    rcg_monitoring_priority           = optional(number, 600)
+    rcg_custom_network_priority       = optional(number, 700)
+    rcg_custom_application_priority   = optional(number, 800)
   })
   default = {}
 }
@@ -260,7 +260,8 @@ variable "tenable_platform" {
   description = "Tenable platform FQDNs for scanner cloud updates"
   default = [
     "appliance.cloud.tenable.com",
-    "*.cloud.tenable.com"
+    "*.cloud.tenable.com",
+    "plugins.nessus.org",
   ]
 }
 
@@ -273,6 +274,10 @@ variable "linux_update_fqdns" {
     "security.ubuntu.com",
     "snapshot.ubuntu.com",
     "*.snapcraftcontent.com",
+    # Background OS services that show up alongside the package repos
+    "motd.ubuntu.com",         # Ubuntu Message of the Day
+    "livepatch.canonical.com", # Canonical Livepatch service
+    "entropy.ubuntu.com",      # entropy daemon
   ]
 }
 
