@@ -99,6 +99,64 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet" {
       }
     }
   }
+
+  #############################################################################
+  # Nerdio Manager (NME) outbound (optional, default off) - service-tag based.
+  # NME's control plane talks to Azure App Service (its web app + licensing),
+  # Entra ID, ARM and Azure Monitor; control DB is Azure SQL. Service tags replace
+  # hand-maintained FQDN/IP lists. Source-scoped to ip_groups.nerdio.
+  #############################################################################
+
+  dynamic "network_rule_collection" {
+    for_each = local.has_nerdio_rules ? [1] : []
+    content {
+      name     = "Nerdio_Outbound"
+      priority = local.p_nerdio_net
+      action   = "Allow"
+      rule {
+        name                  = "Nerdio_Azure_Services"
+        source_ip_groups      = [local.ip_group_ids.nerdio]
+        destination_addresses = ["AppService", "AzureActiveDirectory", "AzureResourceManager", "AzureMonitor"]
+        destination_ports     = ["443"]
+        protocols             = ["TCP"]
+      }
+      rule {
+        name                  = "Nerdio_Azure_SQL"
+        source_ip_groups      = [local.ip_group_ids.nerdio]
+        destination_addresses = ["Sql"] # service tag - Azure SQL
+        destination_ports     = ["1433", "11000-11999"]
+        protocols             = ["TCP"]
+      }
+    }
+  }
+
+  #############################################################################
+  # AVD M365 non-HTTPS (optional) - Teams media (UDP) + Exchange mail ports.
+  # Office365 service tag covers the Microsoft 365 IP ranges for these flows.
+  #############################################################################
+
+  dynamic "network_rule_collection" {
+    for_each = local.has_avd_rules ? [1] : []
+    content {
+      name     = "AVD_M365_Network"
+      priority = local.p_avd_net
+      action   = "Allow"
+      rule {
+        name                  = "Teams_Media_UDP"
+        source_ip_groups      = [local.ip_group_ids.avd]
+        destination_addresses = ["Office365"] # service tag
+        destination_ports     = ["3478", "3479", "3480", "3481"]
+        protocols             = ["UDP"]
+      }
+      rule {
+        name                  = "Exchange_Mail"
+        source_ip_groups      = [local.ip_group_ids.avd]
+        destination_addresses = ["Office365"] # service tag
+        destination_ports     = ["25", "143", "587", "993", "995"]
+        protocols             = ["TCP"]
+      }
+    }
+  }
 }
 
 ###############################################################################
@@ -502,6 +560,60 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet_applicati
         protocols {
           type = "Https"
           port = 443
+        }
+      }
+    }
+  }
+
+  #############################################################################
+  # AVD session-host + M365 outbound (optional, default off)
+  # Standard egress for any AVD deployment. Source-scoped to ip_groups.avd.
+  # WVD service traffic + Office365 come from FQDN tags; avd_session_host_fqdns
+  # adds the platform/agent endpoints not in those tags. Teams media (UDP) +
+  # Exchange mail ports are the AVD_M365_Network rule in the Internet Network RCG.
+  #############################################################################
+
+  dynamic "application_rule_collection" {
+    for_each = local.has_avd_rules ? [1] : []
+    content {
+      name     = "AVD_Outbound"
+      priority = local.p_avd
+      action   = "Allow"
+
+      # AVD service traffic (*.wvd.microsoft.com, agent, broker, etc.)
+      rule {
+        name                  = "AVD_Service_Traffic"
+        source_ip_groups      = [local.ip_group_ids.avd]
+        destination_fqdn_tags = ["WindowsVirtualDesktop"]
+        protocols {
+          type = "Https"
+          port = 443
+        }
+      }
+
+      # Microsoft 365 (Exchange/SharePoint/Teams/Common) over HTTPS
+      rule {
+        name                  = "AVD_M365"
+        source_ip_groups      = [local.ip_group_ids.avd]
+        destination_fqdn_tags = local.caf_office365_fqdn_tags
+        protocols {
+          type = "Https"
+          port = 443
+        }
+      }
+
+      # Session-host platform/agent FQDNs not covered by the tags (HTTPS + HTTP for certs)
+      rule {
+        name              = "AVD_Session_Host_FQDNs"
+        source_ip_groups  = [local.ip_group_ids.avd]
+        destination_fqdns = sort(distinct(tolist(var.avd_extra_fqdns)))
+        protocols {
+          type = "Https"
+          port = 443
+        }
+        protocols {
+          type = "Http"
+          port = 80
         }
       }
     }
