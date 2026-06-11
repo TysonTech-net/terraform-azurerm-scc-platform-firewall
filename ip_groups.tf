@@ -13,6 +13,8 @@ locals {
     lm_collectors    = { cidrs = try(var.ip_groups.logicmonitor.collectors, []), required = false }
     lm_targets       = { cidrs = try(var.ip_groups.logicmonitor.targets, []), required = false }
     tenable_scanners = { cidrs = try(var.ip_groups.tenable.scanners, []), required = false }
+    nerdio           = { cidrs = try(var.ip_groups.nerdio, []), required = false }
+    avd              = { cidrs = try(var.ip_groups.avd, []), required = false }
   }
 
   # Custom IP groups (from var.custom_ip_groups) merged into the same resource
@@ -46,6 +48,8 @@ locals {
   has_jumpboxes     = contains(keys(local.ip_groups_to_create), "jumpboxes")
   has_logicmonitor  = contains(keys(local.ip_groups_to_create), "lm_collectors") && contains(keys(local.ip_groups_to_create), "lm_targets")
   has_tenable       = contains(keys(local.ip_groups_to_create), "tenable_scanners")
+  has_nerdio        = contains(keys(local.ip_groups_to_create), "nerdio")
+  has_avd           = contains(keys(local.ip_groups_to_create), "avd")
 }
 
 ###############################################################################
@@ -110,5 +114,16 @@ locals {
     local.settings.enable_jumpbox_access,
     local.has_jumpboxes,
     local.has_spokes,
+  ])
+
+  # AVD project egress profiles - only emit when toggled on AND the source IP group exists
+  has_nerdio_rules = alltrue([
+    local.settings.enable_nerdio,
+    local.has_nerdio,
+  ])
+
+  has_avd_rules = alltrue([
+    local.settings.enable_avd,
+    local.has_avd,
   ])
 }

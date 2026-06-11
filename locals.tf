@@ -52,6 +52,10 @@ locals {
     enable_linux_updates = coalesce(try(var.rule_settings.enable_linux_updates, null), true)
     enable_tenable       = coalesce(try(var.rule_settings.enable_tenable, null), false)
 
+    # AVD project egress profiles (opt-in)
+    enable_nerdio = coalesce(try(var.rule_settings.enable_nerdio, null), false)
+    enable_avd    = coalesce(try(var.rule_settings.enable_avd, null), false)
+
     # Rule collection group priorities
     # Order: DNAT(100) → Troubleshoot(200) → Identity(300) → Internet Net(400) / App(410) → Platform Net(500) / App(510) → Monitoring(600) → Custom(700-800)
     rcg_troubleshooting_priority      = coalesce(try(var.rule_settings.rcg_troubleshooting_priority, null), 200)
@@ -82,9 +86,11 @@ locals {
   p_replication      = local.settings.rcg_identity_priority + 8
 
   # Internet Network rule priorities (RCG priority 400)
-  p_az_infra = local.settings.rcg_internet_network_priority + 1 # Azure Infrastructure (Wire Server, IMDS, KMS)
-  p_ntp      = local.settings.rcg_internet_network_priority + 2 # NTP for all VMs
-  p_lm       = local.settings.rcg_internet_network_priority + 3 # LogicMonitor Outbound IPs
+  p_az_infra   = local.settings.rcg_internet_network_priority + 1 # Azure Infrastructure (Wire Server, IMDS, KMS)
+  p_ntp        = local.settings.rcg_internet_network_priority + 2 # NTP for all VMs
+  p_lm         = local.settings.rcg_internet_network_priority + 3 # LogicMonitor Outbound IPs
+  p_nerdio_net = local.settings.rcg_internet_network_priority + 4 # Nerdio Azure SQL (Sql service tag)
+  p_avd_net    = local.settings.rcg_internet_network_priority + 5 # AVD Teams media (UDP) + Exchange mail ports
 
   # Internet Application rule priorities (RCG priority 410)
   p_az_net            = local.settings.rcg_internet_application_priority + 1 # AzureCoreServices
@@ -95,6 +101,7 @@ locals {
   p_edge_updates      = local.settings.rcg_internet_application_priority + 6 # Edge browser updates + SmartScreen
   p_linux_updates     = local.settings.rcg_internet_application_priority + 7 # Linux package repository access
   p_tenable_updates   = local.settings.rcg_internet_application_priority + 8 # Tenable cloud updates
+  p_avd               = local.settings.rcg_internet_application_priority + 9 # AVD session-host + M365 outbound (app)
 
   # Platform Network rule priorities (RCG priority 500)
   p_spoke_to_spoke      = local.settings.rcg_platform_network_priority + 1 # Spoke ↔ Spoke traffic

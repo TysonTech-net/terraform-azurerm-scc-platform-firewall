@@ -78,11 +78,14 @@ output "rule_collection_summary" {
       priority               = local.settings.rcg_internet_network_priority
       azure_management_rules = local.settings.enable_az_mgmt_rules
       logicmonitor_outbound  = local.has_logicmonitor
+      nerdio                 = local.has_nerdio_rules
+      avd_m365_network       = local.has_avd_rules
     }
     internet_application = {
       priority              = local.settings.rcg_internet_application_priority
       azure_management_apps = local.settings.enable_az_mgmt_app_rules
       logicmonitor_outbound = local.has_logicmonitor
+      avd                   = local.has_avd_rules
     }
     platform_network = {
       priority            = local.settings.rcg_platform_network_priority

@@ -74,6 +74,12 @@ variable "ip_groups" {
     tenable = optional(object({
       scanners = optional(set(string), [])
     }), {})
+
+    # Nerdio Manager (NME) management subnet(s) - source for the Nerdio egress profile
+    nerdio = optional(set(string), [])
+
+    # AVD session-host subnets - source for the AVD + M365 egress profile
+    avd = optional(set(string), [])
   })
 
   validation {
@@ -135,6 +141,12 @@ variable "rule_settings" {
     enable_edge_updates  = optional(bool, true)  # Edge browser updates + SmartScreen
     enable_linux_updates = optional(bool, true)  # Linux package repo access (Ubuntu ESM etc.)
     enable_tenable       = optional(bool, false) # Tenable vulnerability scanning (opt-in)
+
+    # AVD project egress profiles (opt-in; standard for any Nerdio/AVD deployment).
+    # Source-scoped to ip_groups.nerdio / ip_groups.avd respectively, so they only
+    # apply where those CIDRs are supplied. Off by default - existing consumers unaffected.
+    enable_nerdio = optional(bool, false) # Nerdio Manager (NME) outbound - requires ip_groups.nerdio
+    enable_avd    = optional(bool, false) # AVD session-host + M365 outbound - requires ip_groups.avd
 
     # Rule collection group priorities
     # Order: DNAT(100) → Troubleshoot(200) → Identity(300) → Internet Net(400) / App(410) → Platform Net(500) / App(510) → Monitoring(600) → Custom(700-800)
@@ -287,6 +299,23 @@ variable "edge_update_fqdns" {
   default = [
     "msedge.api.cdp.microsoft.com",
     "unitedkingdom.smartscreen.microsoft.com"
+  ]
+}
+
+# AVD session-host outbound FQDNs not covered by the WindowsVirtualDesktop / Office365
+# FQDN tags (which enable_avd emits) nor by an Azure service tag - i.e. the AVD agent
+# telemetry + certificate endpoints Microsoft documents as explicit FQDNs. Emitted
+# (HTTPS 443 + HTTP 80 for cert hosts) only when enable_avd = true, source-scoped to
+# ip_groups.avd. Marketplace/blob endpoints are intentionally omitted - they are covered
+# by the platform baseline (fqdns_updates_and_security / fqdns_storage for source *).
+variable "avd_extra_fqdns" {
+  type        = set(string)
+  description = "AVD session-host FQDNs beyond the WVD/Office365 tags + service tags (agent telemetry + certs)"
+  default = [
+    "gcs.prod.monitoring.core.windows.net",        # AVD agent traffic
+    "*.prod.warm.ingest.monitor.core.windows.net", # AVD agent / diagnostics
+    "oneocsp.microsoft.com",                       # Certificate OCSP
+    "www.microsoft.com",                           # Certificate CRL
   ]
 }
 

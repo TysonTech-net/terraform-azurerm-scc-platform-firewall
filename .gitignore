@@ -1,0 +1,24 @@
+# Terraform working files
+.terraform/
+.terraform.tfstate.lock.info
+
+# State files (should never be committed for a module)
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Plan output
+*.tfplan
+*.tfplan.*
+
+# CLI config / vars that may carry secrets
+.terraformrc
+terraform.rc
+*.auto.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
