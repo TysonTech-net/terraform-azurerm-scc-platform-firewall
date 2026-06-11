@@ -2,6 +2,12 @@
 
 All notable changes to this module are documented here. Versions are git tags.
 
+## v1.6.3
+
+### Added
+- **`enable_avd` RDP Shortpath relay** — new `RDP_Shortpath_Relay` rule in the AVD network collection (`AVD_M365_Network`) allows the **`WindowsVirtualDesktop`** service tag over **UDP 3478-3481** (STUN/TURN). RDP Shortpath for public networks was being denied (it can't be expressed as an application/FQDN rule); without it sessions fall back to slower TCP relay. Agnostic to any AVD deployment.
+- **`avd_extra_fqdns`** default extended with **`intstreamreleases.z22.web.core.windows.net`** — the Microsoft-hosted Azure Storage static-site endpoint serving the **Remote Desktop WebRTC Redirector Service** installer/updates (Teams media optimisation). Hit by AVD session-host image builds; Microsoft-owned, so agnostic to any AVD deployment.
+
 ## v1.6.2
 
 ### Fixed
