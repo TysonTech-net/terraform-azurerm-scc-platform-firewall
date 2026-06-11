@@ -345,31 +345,9 @@ variable "nerdio_fqdns" {
   ]
 }
 
-# Published Microsoft 365 IP ranges for the non-web AVD M365 flows (there is no Office365
-# network service tag). Emitted in the AVD_M365_Network rule when enable_avd = true.
-# Update from https://learn.microsoft.com/microsoft-365/enterprise/urls-and-ip-address-ranges
-variable "avd_teams_media_cidrs" {
-  type        = set(string)
-  description = "Teams media (UDP 3478-3481) optimize IP ranges for AVD session hosts"
-  default = [
-    "52.112.0.0/14",
-    "52.122.0.0/15",
-    "2603:1063::/38",
-  ]
-}
-
-variable "avd_exchange_online_cidrs" {
-  type        = set(string)
-  description = "Exchange Online IP ranges for AVD session-host mail ports (25/143/587/993/995)"
-  default = [
-    "40.92.0.0/15",
-    "40.107.0.0/16",
-    "52.100.0.0/14",
-    "104.47.0.0/17",
-    "2a01:111:f400::/48",
-    "2a01:111:f403::/48",
-  ]
-}
+# NB: the non-web AVD M365 flows (Teams media UDP, Exchange mail ports) now use the
+# granular Office365.* service tags directly in rules.internet.tf (Azure Firewall's O365
+# integration), so no hand-maintained CIDR variables are needed.
 
 variable "custom_ip_groups" {
   description = "Additional IP groups to create (key = group name, value = list of CIDRs). Referenceable in custom rules via source_ip_groups/destination_ip_groups by key name."

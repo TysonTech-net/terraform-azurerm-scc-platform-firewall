@@ -141,20 +141,22 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet" {
       name     = "AVD_M365_Network"
       priority = local.p_avd_net
       action   = "Allow"
-      # NB: there is no "Office365" network service tag in Azure (O365 web is the
-      # Office365.* FQDN tags, used in the AVD_Outbound app rule). The non-web M365
-      # flows below use the published O365 IP ranges (tunable vars).
+      # Microsoft 365 granular service tags (Azure Firewall's built-in O365 integration,
+      # auto-updated from the O365 endpoints API). The bare "Office365" tag is NOT valid,
+      # but the granular Office365.<product>.<category> tags are (selectable in the portal
+      # network-rule UI). Resolve to IPv4 only - avoids the IPv6-literal rejection that a
+      # hand-maintained CIDR list hits (FirewallPolicyRuleIpv6AddressNotAllowed).
       rule {
         name                  = "Teams_Media_UDP"
         source_ip_groups      = [local.ip_group_ids.avd]
-        destination_addresses = sort(distinct(tolist(var.avd_teams_media_cidrs)))
+        destination_addresses = ["Office365.Skype.Optimize"] # Teams/Skype real-time media
         destination_ports     = ["3478", "3479", "3480", "3481"]
         protocols             = ["UDP"]
       }
       rule {
         name                  = "Exchange_Mail"
         source_ip_groups      = [local.ip_group_ids.avd]
-        destination_addresses = sort(distinct(tolist(var.avd_exchange_online_cidrs)))
+        destination_addresses = ["Office365.Exchange.Allow.Required"] # Exchange Online
         destination_ports     = ["25", "143", "587", "993", "995"]
         protocols             = ["TCP"]
       }

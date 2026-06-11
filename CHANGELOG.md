@@ -2,6 +2,11 @@
 
 All notable changes to this module are documented here. Versions are git tags.
 
+## v1.6.2
+
+### Fixed
+- **AVD `Teams_Media_UDP` / `Exchange_Mail` network rules** now use Azure Firewall's granular **`Office365.*` service tags** (`Office365.Skype.Optimize`, `Office365.Exchange.Allow.Required`) instead of hand-maintained M365 IP CIDRs. The v1.6.1 CIDR lists contained IPv6 ranges, which Azure Firewall network rules reject (`FirewallPolicyRuleIpv6AddressNotAllowed`) — this broke apply. The service tags are IPv4-only, auto-updated from the O365 endpoints API, and the correct mechanism (selectable in the portal network-rule UI). Removed the now-unused `avd_teams_media_cidrs` / `avd_exchange_online_cidrs` variables.
+
 ## v1.6.1
 
 ### Fixed
