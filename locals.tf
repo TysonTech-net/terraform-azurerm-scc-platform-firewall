@@ -93,15 +93,16 @@ locals {
   p_avd_net    = local.settings.rcg_internet_network_priority + 5 # AVD Teams media (UDP) + Exchange mail ports
 
   # Internet Application rule priorities (RCG priority 410)
-  p_az_net            = local.settings.rcg_internet_application_priority + 1 # AzureCoreServices
-  p_az_workload       = local.settings.rcg_internet_application_priority + 2 # AzureWorkloadServices
-  p_az_app            = local.settings.rcg_internet_application_priority + 3 # AzureMgmtApplications
-  p_lm_app            = local.settings.rcg_internet_application_priority + 4 # LogicMonitor Outbound FQDNs
-  p_internet_outbound = local.settings.rcg_internet_application_priority + 5 # HTTP/HTTPS to internet
-  p_edge_updates      = local.settings.rcg_internet_application_priority + 6 # Edge browser updates + SmartScreen
-  p_linux_updates     = local.settings.rcg_internet_application_priority + 7 # Linux package repository access
-  p_tenable_updates   = local.settings.rcg_internet_application_priority + 8 # Tenable cloud updates
-  p_avd               = local.settings.rcg_internet_application_priority + 9 # AVD session-host + M365 outbound (app)
+  p_az_net            = local.settings.rcg_internet_application_priority + 1  # AzureCoreServices
+  p_az_workload       = local.settings.rcg_internet_application_priority + 2  # AzureWorkloadServices
+  p_az_app            = local.settings.rcg_internet_application_priority + 3  # AzureMgmtApplications
+  p_lm_app            = local.settings.rcg_internet_application_priority + 4  # LogicMonitor Outbound FQDNs
+  p_internet_outbound = local.settings.rcg_internet_application_priority + 5  # HTTP/HTTPS to internet
+  p_edge_updates      = local.settings.rcg_internet_application_priority + 6  # Edge browser updates + SmartScreen
+  p_linux_updates     = local.settings.rcg_internet_application_priority + 7  # Linux package repository access
+  p_tenable_updates   = local.settings.rcg_internet_application_priority + 8  # Tenable cloud updates
+  p_avd               = local.settings.rcg_internet_application_priority + 9  # AVD session-host + M365 outbound (app)
+  p_nerdio            = local.settings.rcg_internet_application_priority + 10 # Nerdio Manager (NME) outbound FQDNs (app)
 
   # Platform Network rule priorities (RCG priority 500)
   p_spoke_to_spoke      = local.settings.rcg_platform_network_priority + 1 # Spoke ↔ Spoke traffic
@@ -307,6 +308,7 @@ locals {
     "*.data.microsoft.com",
     "*.events.data.microsoft.com",
     "*.handler.control.monitor.azure.com",
+    "*.ingest.monitor.azure.com", # Azure Monitor Agent (AMA) DCR/DCE log+metric ingestion
     "*.monitoring.azure.com",
     "*.ods.opinsights.azure.com",
     "*.oms.opinsights.azure.com",

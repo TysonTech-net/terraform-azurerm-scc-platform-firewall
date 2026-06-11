@@ -2,6 +2,16 @@
 
 All notable changes to this module are documented here. Versions are git tags.
 
+## v1.6.1
+
+### Fixed
+- **`enable_avd` Teams/Exchange network rule** used an invalid `Office365` service tag — there is no `Office365` *network* service tag in Azure, so the rule was a silent no-op. Replaced with the published Microsoft 365 IP ranges via new `var.avd_teams_media_cidrs` + `var.avd_exchange_online_cidrs`. (O365 *web* egress remains on the `Office365.*` FQDN tags in the application rule, which are valid.)
+
+### Added
+- **`enable_nerdio` now also emits an application rule** (`var.nerdio_fqdns`) with NME's named endpoints, alongside the service-tag network rule — Nerdio URLs allowed by name, not just broad service tags.
+- `*.ingest.monitor.azure.com` added to the monitoring baseline (`fqdns_monitoring`) — Azure Monitor Agent (AMA) DCR/DCE log + metric ingestion.
+- `avd_extra_fqdns` default extended with `login.windows.net` + `*.sfx.ms` (optional M365 / OneDrive per Nerdio's AVD session-host requirements).
+
 ## v1.6.0
 
 ### Added
