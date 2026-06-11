@@ -141,17 +141,20 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet" {
       name     = "AVD_M365_Network"
       priority = local.p_avd_net
       action   = "Allow"
+      # NB: there is no "Office365" network service tag in Azure (O365 web is the
+      # Office365.* FQDN tags, used in the AVD_Outbound app rule). The non-web M365
+      # flows below use the published O365 IP ranges (tunable vars).
       rule {
         name                  = "Teams_Media_UDP"
         source_ip_groups      = [local.ip_group_ids.avd]
-        destination_addresses = ["Office365"] # service tag
+        destination_addresses = sort(distinct(tolist(var.avd_teams_media_cidrs)))
         destination_ports     = ["3478", "3479", "3480", "3481"]
         protocols             = ["UDP"]
       }
       rule {
         name                  = "Exchange_Mail"
         source_ip_groups      = [local.ip_group_ids.avd]
-        destination_addresses = ["Office365"] # service tag
+        destination_addresses = sort(distinct(tolist(var.avd_exchange_online_cidrs)))
         destination_ports     = ["25", "143", "587", "993", "995"]
         protocols             = ["TCP"]
       }
@@ -557,6 +560,33 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet_applicati
         name              = "TenableCloudUpdates"
         source_ip_groups  = [local.ip_group_ids.tenable_scanners]
         destination_fqdns = sort(distinct(tolist(var.tenable_platform)))
+        protocols {
+          type = "Https"
+          port = 443
+        }
+      }
+    }
+  }
+
+  #############################################################################
+  # Nerdio Manager (NME) outbound FQDNs (optional, default off)
+  # NME's named application endpoints (licensing, extensions, App Insights, NME
+  # web app, Graph/ARM/AAD). The Azure DB + broad platform are the Nerdio_Outbound
+  # network rule (service tags) in the Internet Network RCG; these are the explicit
+  # Nerdio URLs by name. Source-scoped to ip_groups.nerdio.
+  #############################################################################
+
+  dynamic "application_rule_collection" {
+    for_each = local.has_nerdio_rules ? [1] : []
+    content {
+      name     = "Nerdio_Outbound_FQDNs"
+      priority = local.p_nerdio
+      action   = "Allow"
+
+      rule {
+        name              = "NerdioManagerEgress"
+        source_ip_groups  = [local.ip_group_ids.nerdio]
+        destination_fqdns = sort(distinct(tolist(var.nerdio_fqdns)))
         protocols {
           type = "Https"
           port = 443

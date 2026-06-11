@@ -316,6 +316,58 @@ variable "avd_extra_fqdns" {
     "*.prod.warm.ingest.monitor.core.windows.net", # AVD agent / diagnostics
     "oneocsp.microsoft.com",                       # Certificate OCSP
     "www.microsoft.com",                           # Certificate CRL
+    "login.windows.net",                           # M365 sign-in (optional per Nerdio docs)
+    "*.sfx.ms",                                    # OneDrive client updates (optional)
+  ]
+}
+
+# Nerdio Manager (NME) outbound FQDNs - the named NME application endpoints (HTTPS 443).
+# Emitted as an application rule (source-scoped to ip_groups.nerdio) when enable_nerdio
+# = true, alongside the Sql/Azure service-tag network rule. Explicit URLs so NME's
+# named endpoints are allowed by name (service tags alone are too broad to express them).
+variable "nerdio_fqdns" {
+  type        = set(string)
+  description = "Nerdio Manager (NME) outbound FQDNs (HTTPS 443)"
+  default = [
+    "nwp-web-app.azurewebsites.net",       # Nerdio licensing
+    "*.azurewebsites.net",                 # NME web app / back-end
+    "nmwextensions.blob.core.windows.net", # NME DSC extension scripts
+    "*.applicationinsights.azure.com",     # App Insights
+    "api.loganalytics.io",                 # Log Analytics API
+    "api.applicationinsights.io",          # App Insights API
+    "login.microsoftonline.com",           # Entra ID auth
+    "login.windows.net",                   # Entra ID (AAD SQL auth)
+    "graph.microsoft.com",                 # Microsoft Graph
+    "management.azure.com",                # ARM / AVD management
+    "api.github.com",                      # Scripted Actions repo
+    "*.githubusercontent.com",             # GitHub content
+    "*.vault.azure.net",                   # Key Vault
+  ]
+}
+
+# Published Microsoft 365 IP ranges for the non-web AVD M365 flows (there is no Office365
+# network service tag). Emitted in the AVD_M365_Network rule when enable_avd = true.
+# Update from https://learn.microsoft.com/microsoft-365/enterprise/urls-and-ip-address-ranges
+variable "avd_teams_media_cidrs" {
+  type        = set(string)
+  description = "Teams media (UDP 3478-3481) optimize IP ranges for AVD session hosts"
+  default = [
+    "52.112.0.0/14",
+    "52.122.0.0/15",
+    "2603:1063::/38",
+  ]
+}
+
+variable "avd_exchange_online_cidrs" {
+  type        = set(string)
+  description = "Exchange Online IP ranges for AVD session-host mail ports (25/143/587/993/995)"
+  default = [
+    "40.92.0.0/15",
+    "40.107.0.0/16",
+    "52.100.0.0/14",
+    "104.47.0.0/17",
+    "2a01:111:f400::/48",
+    "2a01:111:f403::/48",
   ]
 }
 
