@@ -131,8 +131,9 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet" {
   }
 
   #############################################################################
-  # AVD M365 non-HTTPS (optional) - Teams media (UDP) + Exchange mail ports.
-  # Office365 service tag covers the Microsoft 365 IP ranges for these flows.
+  # AVD non-HTTPS network flows (optional) - RDP Shortpath relay (WindowsVirtualDesktop
+  # service tag, UDP 3478-3481 STUN/TURN), Teams media (UDP), Exchange mail ports.
+  # HTTPS service traffic is the AVD_Outbound application rule.
   #############################################################################
 
   dynamic "network_rule_collection" {
@@ -141,6 +142,17 @@ resource "azurerm_firewall_policy_rule_collection_group" "rcg_internet" {
       name     = "AVD_M365_Network"
       priority = local.p_avd_net
       action   = "Allow"
+      # RDP Shortpath for public networks: STUN/TURN relay to the WindowsVirtualDesktop
+      # service tag (51.5.0.0/16) over UDP 3478-3481. If blocked, sessions fall back to
+      # TCP relay (the WindowsVirtualDesktop FQDN tag in the app rule) - so this is a
+      # latency/quality rule, not a hard dependency.
+      rule {
+        name                  = "RDP_Shortpath_Relay"
+        source_ip_groups      = [local.ip_group_ids.avd]
+        destination_addresses = ["WindowsVirtualDesktop"]
+        destination_ports     = ["3478", "3479", "3480", "3481"]
+        protocols             = ["UDP"]
+      }
       # Microsoft 365 granular service tags (Azure Firewall's built-in O365 integration,
       # auto-updated from the O365 endpoints API). The bare "Office365" tag is NOT valid,
       # but the granular Office365.<product>.<category> tags are (selectable in the portal

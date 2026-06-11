@@ -318,6 +318,7 @@ variable "avd_extra_fqdns" {
     "www.microsoft.com",                           # Certificate CRL
     "login.windows.net",                           # M365 sign-in (optional per Nerdio docs)
     "*.sfx.ms",                                    # OneDrive client updates (optional)
+    "intstreamreleases.z22.web.core.windows.net",  # Remote Desktop WebRTC Redirector Service installer/updates (Teams media optimisation)
   ]
 }
 
