@@ -310,7 +310,7 @@ variable "edge_update_fqdns" {
 # by the platform baseline (fqdns_updates_and_security / fqdns_storage for source *).
 variable "avd_extra_fqdns" {
   type        = set(string)
-  description = "AVD session-host FQDNs beyond the WVD/Office365 tags + service tags (agent telemetry + certs)"
+  description = "AVD session-host FQDNs beyond the WVD/Office365 FQDN tags — the official AVD session-host required FQDNs (sign-in, agent, certs, marketplace, service traffic) not covered by tags or the platform baseline"
   default = [
     "gcs.prod.monitoring.core.windows.net",        # AVD agent traffic
     "*.prod.warm.ingest.monitor.core.windows.net", # AVD agent / diagnostics
@@ -319,6 +319,17 @@ variable "avd_extra_fqdns" {
     "login.windows.net",                           # M365 sign-in (optional per Nerdio docs)
     "*.sfx.ms",                                    # OneDrive client updates (optional)
     "intstreamreleases.z22.web.core.windows.net",  # Remote Desktop WebRTC Redirector Service installer/updates (Teams media optimisation)
+    # Official AVD session-host required FQDNs (Microsoft-managed; aka.ms/required-fqdn-endpoint)
+    "pas.windows.net",                             # Entra ID token / Conditional Access — session-host sign-in
+    "catalogartifact.azureedge.net",               # Azure Marketplace
+    "mrsglobalsteus2prod.blob.core.windows.net",   # Agent + side-by-side (SXS) stack updates
+    "wvdportalstorageblob.blob.core.windows.net",  # Azure portal support
+    "*.aikcertaia.microsoft.com",                  # Certificates (AIK)
+    "azcsprodeusaikpublish.blob.core.windows.net", # Certificates (AIK)
+    "*.microsoftaik.azure.net",                    # Certificates (AIK)
+    "*.service.windows.cloud.microsoft",           # AVD service traffic
+    "*.windows.cloud.microsoft",                   # AVD service traffic
+    "*.windows.static.microsoft",                  # AVD service traffic
   ]
 }
 
