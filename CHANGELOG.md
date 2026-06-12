@@ -2,6 +2,11 @@
 
 All notable changes to this module are documented here. Versions are git tags.
 
+## v1.6.4
+
+### Added
+- **`avd_extra_fqdns`** aligned to the official **AVD session-host required-FQDN list** (`aka.ms/required-fqdn-endpoint`). Adds `pas.windows.net` (Entra ID token / Conditional Access — was blocking session-host **sign-in**), `catalogartifact.azureedge.net` (Marketplace), `mrsglobalsteus2prod.blob.core.windows.net` (agent + SXS stack updates), `wvdportalstorageblob.blob.core.windows.net` (portal support), the AIK certificate hosts (`*.aikcertaia.microsoft.com`, `azcsprodeusaikpublish.blob.core.windows.net`, `*.microsoftaik.azure.net`), and the AVD service-traffic hosts (`*.service.windows.cloud.microsoft`, `*.windows.cloud.microsoft`, `*.windows.static.microsoft`). All Microsoft-owned / agnostic. KMS (1688), `aka.ms` (Azure Local only), and the AAD / WindowsUpdate FQDNs already covered by the `enable_az_mgmt_*` platform baseline are intentionally not duplicated.
+
 ## v1.6.3
 
 ### Added
